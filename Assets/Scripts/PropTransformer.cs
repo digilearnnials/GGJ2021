@@ -6,6 +6,12 @@ public class PropTransformer : MonoBehaviour
     [SerializeField] private LayerMask raycastMask = default;
     [SerializeField] private float rayDistance = 5;
     [SerializeField] private float rayRadius = 1f;
+    [SerializeField] private MeshRenderer radarEffect = default;
+    [SerializeField, Range(1, 10)] private float transformTimer = 5f;
+
+    private float lastTransformTime = 0;
+
+    private Material radarMaterial = default;
 
     private GameObject propForm = default;
     private MeshFilter meshFilter = default;
@@ -19,6 +25,10 @@ public class PropTransformer : MonoBehaviour
 
     private void Start()
     {
+        radarMaterial = radarEffect.material;
+        radarMaterial.SetFloat("_Opacity", 0f);
+        radarEffect.gameObject.SetActive(true);
+        
         ownMeshRenderer = GetComponent<MeshRenderer>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         
@@ -53,12 +63,27 @@ public class PropTransformer : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (propForm.activeSelf)
+        {
+            if (Time.time - lastTransformTime > transformTimer)
+            {
+                radarMaterial.SetFloat("_Opacity", 1f);
+            }
+        }
+    }
+
     void TransformTo(GameObject to)
     {
         meshFilter.mesh = to.GetComponent<MeshFilter>().mesh;
         meshCollider.sharedMesh = meshFilter.mesh;
         meshRenderer.material = to.GetComponent<MeshRenderer>().material;
 
+        lastTransformTime = Time.time;
+        radarMaterial.SetFloat("_Opacity", 0f);
+        radarEffect.gameObject.SetActive(true);
+        
         propForm.SetActive(true);
 
         ownMeshRenderer.enabled = false;
@@ -71,6 +96,8 @@ public class PropTransformer : MonoBehaviour
         capsuleCollider.enabled = true;
         
         propForm.SetActive(false);
+        
+        radarEffect.gameObject.SetActive(false);
     }
 
     private void OnDrawGizmos()
