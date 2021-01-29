@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -13,7 +13,10 @@ public class Movement : MonoBehaviour
     private Vector3 inputDirection = default;
     private Vector3 moveDirection = default;
     private Vector3 lookDirection = default;
+    private Vector3 velocity = default;
     private Rigidbody body = default;
+
+    private bool onground = false;
 
     private void Start()
     {
@@ -22,6 +25,8 @@ public class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        velocity = body.velocity;
+        
         inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
         moveDirection = Camera.main.transform.TransformDirection(inputDirection);
@@ -43,8 +48,29 @@ public class Movement : MonoBehaviour
         }
         
         body.MoveRotation(Quaternion.LookRotation(lookDirection));
+
+        if (onground)
+        {
+            velocity.x = moveDirection.x * moveSpeed;
+            velocity.z = moveDirection.z * moveSpeed;
+        }
         
-        body.velocity = moveDirection * moveSpeed;
+        body.velocity = velocity;
+
+        onground = false;
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        onground = false;
+    }
+
+    private void OnCollisionStay(Collision other)
+    {
+        for (int i = 0; i < other.contactCount; i++) {
+            Vector3 normal = other.GetContact(i).normal;
+            onground |= normal.y >= 0.9f;
+        }
     }
 
 #if UNITY_EDITOR
