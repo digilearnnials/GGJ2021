@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 public class PropTransformer : MonoBehaviour
 {
     [SerializeField] private LayerMask raycastMask = default;
     [SerializeField] private float rayDistance = 5;
-    [SerializeField] private float rayRadius = .5f;
+    [SerializeField] private float rayRadius = 1f;
 
     private GameObject propForm = default;
     private MeshFilter meshFilter = default;
@@ -40,13 +41,13 @@ public class PropTransformer : MonoBehaviour
     {
         if(Physics.SphereCast(transform.position, rayRadius, transform.forward, out hit, rayDistance, raycastMask))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 TransformTo(hit.transform.gameObject);
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKey(KeyCode.R))
         {
             BackToOriginalForm();
         }
@@ -70,5 +71,21 @@ public class PropTransformer : MonoBehaviour
         capsuleCollider.enabled = true;
         
         propForm.SetActive(false);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (hit.transform)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(hit.point, rayRadius);
+        }
+        else
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position + transform.forward * rayDistance, rayRadius);
+        }
+        
+        Gizmos.DrawRay(transform.position, transform.forward * rayDistance);
     }
 }
