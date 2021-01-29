@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PropTransformer : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class PropTransformer : MonoBehaviour
 
     private MeshRenderer ownMeshRenderer = default;
     private CapsuleCollider capsuleCollider = default;
+
+    public UnityEvent<string> OnPropTransform = new UnityEvent<string>();
 
     private void Start()
     {
@@ -88,6 +91,8 @@ public class PropTransformer : MonoBehaviour
 
         ownMeshRenderer.enabled = false;
         capsuleCollider.enabled = false;
+
+        OnPropTransform?.Invoke(to.name);
     }
 
     void BackToOriginalForm()
@@ -98,6 +103,13 @@ public class PropTransformer : MonoBehaviour
         propForm.SetActive(false);
         
         radarEffect.gameObject.SetActive(false);
+        
+        OnPropTransform?.Invoke("");
+    }
+
+    public void ChangeToProp(string propName)
+    {
+        Debug.Log($"Transformado en: {propName}");
     }
 
     private void OnDrawGizmos()

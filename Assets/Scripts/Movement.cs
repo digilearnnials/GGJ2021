@@ -1,7 +1,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -18,17 +17,17 @@ public class Movement : MonoBehaviour
 
     private bool onground = false;
 
-    private void Start()
+    private void Awake()
     {
         body = GetComponent<Rigidbody>();
     }
 
-    private void FixedUpdate()
+    public void MoveAction(Vector3 value)
     {
         velocity = body.velocity;
         
-        inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-
+        inputDirection = value;
+        
         moveDirection = Camera.main.transform.TransformDirection(inputDirection);
 
         moveDirection.y = 0;
