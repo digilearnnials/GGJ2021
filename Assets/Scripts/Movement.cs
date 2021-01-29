@@ -10,9 +10,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private bool lockToViewDirection = false;
     [SerializeField] float moveSpeed = 10;
 
-    [SerializeField] private Vector3 inputDirection = default;
-    [SerializeField] private Vector3 moveDirection = default;
-    [SerializeField] private Vector3 lookDirection = default;
+    private Vector3 inputDirection = default;
+    private Vector3 moveDirection = default;
+    private Vector3 lookDirection = default;
     private Rigidbody body = default;
 
     private void Start()
