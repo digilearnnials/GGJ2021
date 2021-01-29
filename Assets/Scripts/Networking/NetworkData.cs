@@ -33,8 +33,5 @@ namespace GGJ2021.Networking
             }
         }
         #endregion
-
-        // THE NEXT VARIABLE IS FOR TESTING ONLY, DELETE LATER
-        public string colorHex;
     }
 }

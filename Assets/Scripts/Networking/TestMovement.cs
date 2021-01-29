@@ -2,17 +2,23 @@ using UnityEngine;
 
 namespace GGJ2021.Networking
 {
+    [System.Serializable]
+    public class TestNetworkData : NetworkData
+    {
+        public string colorHex;
+    }
+
     public class TestMovement : MonoBehaviour
     {
         [SerializeField] private float movementSpeed;
         [SerializeField] private float rotationSpeed;
 
         private NetworkEntity networkEntity;
-        private NetworkData objectNetworkData;
+        private TestNetworkData objectNetworkData;
 
         void Awake()
         {
-            objectNetworkData = new NetworkData();
+            objectNetworkData = new TestNetworkData();
             networkEntity = GetComponent<NetworkEntity>();
             networkEntity.SubscribeToLocalInstanceUpdate(UpdateLocalInstance);
             networkEntity.SubscribeToLocalDataRetrieval(GetLocalData);
@@ -51,8 +57,9 @@ namespace GGJ2021.Networking
 
         private void UpdateLocalInstance(NetworkData receivedData)
         {
+            TestNetworkData data = (TestNetworkData)receivedData;
             Color receivedColor;
-            if (!ColorUtility.TryParseHtmlString("#" + receivedData.colorHex, out receivedColor))
+            if (!ColorUtility.TryParseHtmlString("#" + data.colorHex, out receivedColor))
                 throw new System.FormatException("The color html string is incorrectly formatted");
             GetComponent<Renderer>().material.color = receivedColor;
         }
