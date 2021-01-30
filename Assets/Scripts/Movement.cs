@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
     private Vector3 lookDirection = default;
     private Vector3 velocity = default;
     private Rigidbody body = default;
+    private CapsuleCollider capsuleCollider = default;
 
     private bool onground = false;
     
@@ -26,6 +27,7 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     public void MoveAction(Vector3 value)
@@ -76,6 +78,44 @@ public class Movement : MonoBehaviour
             Vector3 normal = other.GetContact(i).normal;
             onground |= normal.y >= 0.9f;
         }
+    }
+
+    public void SpectatorMode()
+    {
+        body.useGravity = false;
+
+        capsuleCollider.isTrigger = true;
+    }
+    
+    public void SpectatorMoveAction(Vector3 value)
+    {
+        inputDirection = value;
+        
+        moveDirection = Camera.main.transform.TransformDirection(inputDirection);
+        
+        moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+        
+        if (lockToViewDirection)
+        {
+            var cameraDir = Camera.main.transform.forward;
+            cameraDir.y = 0;
+
+            lookDirection = cameraDir;
+        }
+        else
+        {
+            if (inputDirection.magnitude > .1f) lookDirection = moveDirection;
+        }
+        
+        body.MoveRotation(Quaternion.LookRotation(lookDirection));
+
+        velocity.x = moveDirection.x * moveSpeed;
+        velocity.y = moveDirection.y * moveSpeed;
+        velocity.z = moveDirection.z * moveSpeed;
+        
+        body.position += velocity * Time.deltaTime;
+
+        onground = false;
     }
 
 #if UNITY_EDITOR

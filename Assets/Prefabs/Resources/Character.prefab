@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6740776705226429478}
   - component: {fileID: 6740776705226429479}
   - component: {fileID: 6740776705226429477}
+  - component: {fileID: 8328700447828916835}
   - component: {fileID: 377333815}
   - component: {fileID: 377333816}
   - component: {fileID: 377333817}
@@ -158,6 +159,26 @@ MonoBehaviour:
   OnPropTransform:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8328700447828916835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6740776705226429484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dc123a77297d4a429eb7c0a6deca001, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTag: NPC
+  raycastMask:
+    serializedVersion: 2
+    m_Bits: 193
+  rayDistance: 5
+  rayRadius: 1
+  stunTimer: 5
+  stun: 0
 --- !u!114 &377333815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,12 +191,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3a455229b92fae43aa8920ca5cb1f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onWitch:
-    m_PersistentCalls:
-      m_Calls: []
-  onPhantom:
-    m_PersistentCalls:
-      m_Calls: []
+  playerNetworkData:
+    playerState: 0
+    propName: TRUE FORM
+    actorNumber: 0
+    nickName: 
+    masterClient: 0
+    capurePlayer: 0
 --- !u!114 &377333816
 MonoBehaviour:
   m_ObjectHideFlags: 0
