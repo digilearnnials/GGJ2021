@@ -1,9 +1,9 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PropTransformer : MonoBehaviour
 {
+    [SerializeField] private PropDataList propDataList = default;
     [SerializeField] private LayerMask raycastMask = default;
     [SerializeField] private float rayDistance = 5;
     [SerializeField] private float rayRadius = 1f;
@@ -21,16 +21,18 @@ public class PropTransformer : MonoBehaviour
 
     private RaycastHit hit = default;
 
+    public RaycastHit Hit => hit;
+
     private MeshRenderer ownMeshRenderer = default;
     private CapsuleCollider capsuleCollider = default;
 
-    public UnityEvent<string> OnPropTransform = new UnityEvent<string>();
+    [HideInInspector] public UnityEvent<string> OnPropTransform = new UnityEvent<string>();
 
-    private void Start()
+    private void Awake()
     {
         radarMaterial = radarEffect.material;
         radarMaterial.SetFloat("_Opacity", 0f);
-        radarEffect.gameObject.SetActive(true);
+        radarEffect.gameObject.SetActive(false);
         
         ownMeshRenderer = GetComponent<MeshRenderer>();
         capsuleCollider = GetComponent<CapsuleCollider>();
@@ -50,22 +52,6 @@ public class PropTransformer : MonoBehaviour
         meshCollider.convex = true;
     }
 
-    private void FixedUpdate()
-    {
-        if(Physics.SphereCast(transform.position, rayRadius, transform.forward, out hit, rayDistance, raycastMask))
-        {
-            if (Input.GetMouseButton(0))
-            {
-                TransformTo(hit.transform.gameObject);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.R))
-        {
-            BackToOriginalForm();
-        }
-    }
-
     private void LateUpdate()
     {
         if (propForm.activeSelf)
@@ -77,41 +63,59 @@ public class PropTransformer : MonoBehaviour
         }
     }
 
-    void TransformTo(GameObject to)
+    public bool CheckCanTransform()
     {
-        meshFilter.mesh = to.GetComponent<MeshFilter>().mesh;
-        meshCollider.sharedMesh = meshFilter.mesh;
-        meshRenderer.material = to.GetComponent<MeshRenderer>().material;
+        return Physics.SphereCast(transform.position, rayRadius, transform.forward, out hit, rayDistance, raycastMask);
+    }
 
-        lastTransformTime = Time.time;
-        radarMaterial.SetFloat("_Opacity", 0f);
-        radarEffect.gameObject.SetActive(true);
-        
-        propForm.SetActive(true);
-
-        ownMeshRenderer.enabled = false;
-        capsuleCollider.enabled = false;
-
+    public void TransformTo(GameObject to)
+    {
+        ChangeToProp(to.name);
         OnPropTransform?.Invoke(to.name);
     }
 
-    void BackToOriginalForm()
+    public void BackToOriginalForm()
     {
-        ownMeshRenderer.enabled = true;
-        capsuleCollider.enabled = true;
-        
-        propForm.SetActive(false);
-        
-        radarEffect.gameObject.SetActive(false);
-        
-        OnPropTransform?.Invoke("");
+        ChangeToProp("TRUE FORM");
+        OnPropTransform?.Invoke("TRUE FORM");
     }
 
     public void ChangeToProp(string propName)
     {
-        Debug.Log($"Transformado en: {propName}");
+        if(propName != null && propForm && propForm.activeSelf && propForm.name.Contains(propName)) return;
+        
+        if (propName.Contains("TRUE FORM"))
+        {
+            ownMeshRenderer.enabled = true;
+            capsuleCollider.enabled = true;
+
+            propForm.name = propName;
+            
+            propForm.SetActive(false);
+        
+            radarEffect.gameObject.SetActive(false);
+        }
+        else
+        {
+            var propData = propDataList.GetPropDataByName(propName);
+        
+            meshFilter.mesh = propData.mesh;
+            meshCollider.sharedMesh = meshFilter.mesh;
+            meshRenderer.material = propData.material;
+
+            lastTransformTime = Time.time;
+            radarMaterial.SetFloat("_Opacity", 0f);
+            radarEffect.gameObject.SetActive(true);
+        
+            propForm.SetActive(true);
+            propForm.name = propName;
+            
+            ownMeshRenderer.enabled = false;
+            capsuleCollider.enabled = false;
+        }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (hit.transform)
@@ -127,4 +131,5 @@ public class PropTransformer : MonoBehaviour
         
         Gizmos.DrawRay(transform.position, transform.forward * rayDistance);
     }
+#endif
 }

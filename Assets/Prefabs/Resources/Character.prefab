@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4854f1bc1e2825942a46bad258abd38a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  propDataList: {fileID: 11400000, guid: 52830e9c0322a2045a883904d32c17e1, type: 2}
   raycastMask:
     serializedVersion: 2
     m_Bits: 64
@@ -169,6 +170,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3a455229b92fae43aa8920ca5cb1f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onWitch:
+    m_PersistentCalls:
+      m_Calls: []
+  onPhantom:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &377333816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,7 +256,7 @@ GameObject:
   - component: {fileID: 6740776706588139944}
   - component: {fileID: 6740776706588139950}
   - component: {fileID: 6740776706588139951}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: RadarSignalEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}

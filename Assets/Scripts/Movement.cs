@@ -16,6 +16,12 @@ public class Movement : MonoBehaviour
     private Rigidbody body = default;
 
     private bool onground = false;
+    
+    public bool LockToViewDirection
+    {
+        get => lockToViewDirection;
+        set => lockToViewDirection = value;
+    }
 
     private void Awake()
     {

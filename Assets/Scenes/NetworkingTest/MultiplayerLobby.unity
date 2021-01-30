@@ -767,7 +767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58809a6de424b6f45b27faf8e4b38980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPlayersPerRoom: 8
+  maxPlayersPerRoom: 4
   initScreen: {fileID: 1263261901}
   mainMenu: {fileID: 1544432993}
   loadingScreen: {fileID: 373781610}
