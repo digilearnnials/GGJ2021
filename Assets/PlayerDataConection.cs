@@ -1,6 +1,5 @@
 using System;
 using Cinemachine;
-using Com.MyCompany.MyGame;
 using UnityEngine;
 using GGJ2021.Networking;
 using Photon.Pun;
@@ -24,12 +23,17 @@ public class PlayerDataConection : MonoBehaviour
     
     private NetworkEntity networkEntity = default;
     [SerializeField] private PlayerNetworkData playerNetworkData = default;
-    private GameRoomManager gameRoomManager = default;
+    private LocalGameManager localGameManager = default;
 
     private GameObject firstPersonCamera = default;
     private GameObject thirdPersonCamera = default;
     private FollowTarget mapCamera = default;
     private GameObject miniMapUI = default;
+    
+    Vector3 startPosition = Vector3.zero;
+    private Quaternion startRotation = Quaternion.identity;
+
+    private bool callCheckOnlyOnce = true;
 
     private void Awake()
     {
@@ -39,6 +43,8 @@ public class PlayerDataConection : MonoBehaviour
         
         networkEntity = GetComponent<NetworkEntity>();
         playerNetworkData = new PlayerNetworkData();
+
+        localGameManager = FindObjectOfType<LocalGameManager>();
         
         networkEntity.SubscribeToLocalDataRetrieval(SendPlayerNetworkData);
         networkEntity.SubscribeToLocalInstanceUpdate(ReceivePlayerNetworkData);
@@ -86,6 +92,8 @@ public class PlayerDataConection : MonoBehaviour
         propTransformer.OnPropTransform.AddListener(TransformedInProp);
         
         CheckState(playerNetworkData.playerState);
+        
+        SetStartPosAndRot();
     }
 
     private void FixedUpdate()
@@ -172,6 +180,20 @@ public class PlayerDataConection : MonoBehaviour
             case 2:
                 Debug.Log($"El jugador: <color=blue>{playerNetworkData.nickName}</color> es la fantasma");
                 break;
+            case 3:
+                if (callCheckOnlyOnce)
+                {
+                    localGameManager.CheckAllPlayerState();
+                    callCheckOnlyOnce = false;
+                }
+                break;
+            case 4:
+                if (callCheckOnlyOnce)
+                {
+                    localGameManager.CheckAllPlayerState();
+                    callCheckOnlyOnce = false;
+                }
+                break;
         }
         
         propTransformer.ChangeToProp(playerNetworkData.propName);
@@ -234,6 +256,8 @@ public class PlayerDataConection : MonoBehaviour
     {
         playerNetworkData.playerState = value;
         
+        localGameManager.CheckAllPlayerState();
+        
         CheckState(playerNetworkData.playerState);
     }
 
@@ -250,5 +274,27 @@ public class PlayerDataConection : MonoBehaviour
     public string GetNickName()
     {
         return playerNetworkData.nickName;
+    }
+
+    private void SetStartPosAndRot()
+    {
+        if (localGameManager.transform.childCount >= playerNetworkData.actorNumber)
+        {
+            var spawnPoint = localGameManager.transform.GetChild(playerNetworkData.actorNumber - 1).transform;
+
+            startPosition = spawnPoint.position;
+            startRotation = spawnPoint.rotation;
+        }
+        else
+        {
+            startPosition = new Vector3(playerNetworkData.actorNumber, 1, 0);
+        }
+        
+        ResetToStartPos();
+    }
+
+    public void ResetToStartPos()
+    {
+        transform.SetPositionAndRotation(startPosition,startRotation);
     }
 }

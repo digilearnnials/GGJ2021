@@ -3,10 +3,14 @@ using UnityEngine;
 public class ExitTrigger : MonoBehaviour
 {
     private Collider col = default;
+
+    private LocalGameManager localGameManager = default;
     
     // Start is called before the first frame update
     void Start()
     {
+        localGameManager = FindObjectOfType<LocalGameManager>();
+        
         col = GetComponent<Collider>();
         col.isTrigger = true;
     }
