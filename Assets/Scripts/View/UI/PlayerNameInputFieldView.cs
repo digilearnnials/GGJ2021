@@ -1,24 +1,24 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 namespace GGJ2021.View.UI
 {
     /// <summary>
     /// Player name input field. Lets the user input his name.
     /// </summary>
-    [RequireComponent(typeof(InputField))]
+    [RequireComponent(typeof(TMP_InputField))]
     public class PlayerNameInputFieldView : MonoBehaviour
     {
         // Store the PlayerPref Key to avoid typos
         const string playerNamePrefKey = "PlayerName";
 
-        private InputField inputField;
+        private TMP_InputField inputField;
 
         void Start()
         {
             string defaultName = string.Empty;
-            inputField = GetComponent<InputField>();
+            inputField = GetComponent<TMP_InputField>();
             if (inputField != null)
             {
                 if (PlayerPrefs.HasKey(playerNamePrefKey))

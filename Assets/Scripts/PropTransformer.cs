@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,6 +10,8 @@ public class PropTransformer : MonoBehaviour
     [SerializeField] private float rayRadius = 1f;
     [SerializeField] private MeshRenderer radarEffect = default;
     [SerializeField, Range(1, 10)] private float transformTimer = 5f;
+    [SerializeField] private Animator witch = default;
+    [SerializeField] private Animator phantom = default;
 
     private float lastTransformTime = 0;
 
@@ -17,13 +20,13 @@ public class PropTransformer : MonoBehaviour
     private GameObject propForm = default;
     private MeshFilter meshFilter = default;
     private MeshRenderer meshRenderer = default;
-    private MeshCollider meshCollider = default;
+    
 
     private RaycastHit hit = default;
 
     public RaycastHit Hit => hit;
-
-    private MeshRenderer ownMeshRenderer = default;
+    
+    private MeshCollider meshCollider = default;
     private CapsuleCollider capsuleCollider = default;
 
     [HideInInspector] public UnityEvent<string> OnPropTransform = new UnityEvent<string>();
@@ -34,8 +37,11 @@ public class PropTransformer : MonoBehaviour
         radarMaterial.SetFloat("_Opacity", 0f);
         radarEffect.gameObject.SetActive(false);
         
-        ownMeshRenderer = GetComponent<MeshRenderer>();
         capsuleCollider = GetComponent<CapsuleCollider>();
+        
+        meshCollider = GetComponent<MeshCollider>();
+        meshCollider.convex = true;
+        meshCollider.enabled = false;
         
         propForm = new GameObject("Prop Form");
         propForm.transform.SetParent(transform);
@@ -46,10 +52,9 @@ public class PropTransformer : MonoBehaviour
         meshRenderer = propForm.GetComponent<MeshRenderer>();
         propForm.AddComponent<MeshFilter>();
         meshFilter = propForm.GetComponent<MeshFilter>();
-
-        propForm.AddComponent<MeshCollider>();
-        meshCollider = propForm.GetComponent<MeshCollider>();
-        meshCollider.convex = true;
+        
+        witch.gameObject.SetActive(false);
+        phantom.gameObject.SetActive(false);
     }
 
     private void LateUpdate()
@@ -86,7 +91,20 @@ public class PropTransformer : MonoBehaviour
         
         if (propName.Contains("TRUE FORM"))
         {
-            ownMeshRenderer.enabled = true;
+            int state = GetComponent<PlayerDataConection>().GetState();
+            
+            switch (state)
+            {
+                case 1:
+                    witch.gameObject.SetActive(true);
+                    break;
+                case 2:
+                    phantom.gameObject.SetActive(true);
+                    break;
+            }
+
+            meshCollider.enabled = false;
+            
             capsuleCollider.enabled = true;
 
             propForm.name = propName;
@@ -100,8 +118,11 @@ public class PropTransformer : MonoBehaviour
             var propData = propDataList.GetPropDataByName(propName);
         
             meshFilter.mesh = propData.mesh;
-            meshCollider.sharedMesh = meshFilter.mesh;
             meshRenderer.material = propData.material;
+
+            meshCollider.enabled = true;
+            meshCollider.sharedMesh = meshFilter.mesh;
+
 
             lastTransformTime = Time.time;
             radarMaterial.SetFloat("_Opacity", 0f);
@@ -110,7 +131,8 @@ public class PropTransformer : MonoBehaviour
             propForm.SetActive(true);
             propForm.name = propName;
             
-            ownMeshRenderer.enabled = false;
+            witch.gameObject.SetActive(false);
+            phantom.gameObject.SetActive(false);
             capsuleCollider.enabled = false;
         }
     }

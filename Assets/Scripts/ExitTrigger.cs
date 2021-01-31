@@ -17,7 +17,8 @@ public class ExitTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var playerDataConection = other.GetComponent<PlayerDataConection>();
+        PlayerDataConection playerDataConection = other.GetComponent<PlayerDataConection>();
+        
         if(!playerDataConection) return;
         
         switch (playerDataConection.GetState())
