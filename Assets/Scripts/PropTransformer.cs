@@ -47,6 +47,7 @@ public class PropTransformer : MonoBehaviour
         propForm.transform.SetParent(transform);
         propForm.transform.localPosition = Vector3.zero;
         propForm.transform.rotation = transform.rotation;
+        propForm.transform.localScale = Vector3.one * .5f;
 
         propForm.AddComponent<MeshRenderer>();
         meshRenderer = propForm.GetComponent<MeshRenderer>();
