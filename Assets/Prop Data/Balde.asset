@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e1a2068090e5b4195e8c74e40be7b4, type: 3}
   m_Name: Balde
   m_EditorClassIdentifier: 
-  mesh: {fileID: 7924619765015334884, guid: 11a9fe0c0d9169647984d37411284d14, type: 3}
-  material: {fileID: 5561349426305759274, guid: 11a9fe0c0d9169647984d37411284d14, type: 3}
+  mesh: {fileID: 7924619765015334884, guid: 46db334c625e2294d873fbc1541a5fd2, type: 3}
+  material: {fileID: 2100000, guid: 7f3dcf01e62a7e24590b4d937b310437, type: 2}
